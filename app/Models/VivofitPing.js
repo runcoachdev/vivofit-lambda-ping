@@ -1,30 +1,33 @@
 'use strict';
-var con = require('./db');
 
-//VivofitPing object constructor
-var VivofitPing = function (task) {
-};
+const db = require('./db');
 
-VivofitPing.set_VivofitPings = function set_VivofitPings(type, data) {
+class VivofitPing {
+    static async set_VivofitPings(type, data) {
+        try {
+            const values = [[type, JSON.stringify(data), 0]];
+            const sql = 'INSERT INTO t_vivofit_ping(type, response, processed) VALUES ?';
 
-    try {
-        var values = [
-            [type, data, 0]
-        ];
+            let conn;
+            let result;
 
-        let sql = 'INSERT INTO t_vivofit_ping(type, response, processed) VALUES ?';
-        con.query(sql, [values], function (err, res) {
-            if (err) {
-                console.log("error: ", err);
-            } else {
-                result(null, res);
-                return res.sendStatus(200);
+            try {
+                conn = await db.getConnection();
+                result = await conn.query(sql, [values]);
+
+            } catch (err) {
+                console.error(`Failed to obtain a database connection: ${err}`);
+            } finally {
+                if (conn) {
+                    conn.release();
+                }
             }
-        });
-    } catch (err) {
-        console.log(err);
-        return res.sendStatus(500);
+            return result;
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
     }
-};
+}
 
 module.exports = VivofitPing;

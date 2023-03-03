@@ -18,10 +18,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/', routes);
 
-module.exports.handler = serverless(app);
+// module.exports.handler = serverless(app);
 
-// const port = 3000
+const port = 3000
 
-// app.listen(port, () => {
-//     console.log(`Example app listening on port ${port}`)
-// })
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})
